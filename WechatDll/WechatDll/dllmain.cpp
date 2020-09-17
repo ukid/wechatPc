@@ -24,10 +24,10 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 		case DLL_PROCESS_ATTACH:
 		{
 			// 开新线程处理
-			HANDLE lThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ShowDialog, hModule, NULL, 0);
-			if (lThread != 0) {
-				CloseHandle(lThread);
-			}
+			//HANDLE lThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ShowDialog, hModule, NULL, 0);
+			//if (lThread != 0) {
+			//	CloseHandle(lThread);
+			//}
 
 			// 开始监控微信
 			HANDLE mThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Monitor, hModule, NULL, 0);
@@ -99,7 +99,7 @@ DWORD WINAPI SendHeartBeat(HMODULE hModule)
 {
 	while (TRUE) {
 		WsClientSendHeartBeat();
-		Sleep(5000);  // 每隔5秒心跳一次
+		Sleep(1000);  // 每隔1秒心跳一次
 	}
 	return TRUE;
 }

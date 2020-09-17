@@ -39,6 +39,17 @@ void WsClientRecvCallback(char *data)
 	// 初始化数据包
 	Package *package = new Package();
 	package->SetConText(data);
+
+	string sAppId = ReadConfig("app_id");
+	char cAppId[33] = { 0 };
+	sprintf_s(cAppId, sizeof(cAppId), "%s", sAppId.c_str());
+	package->SetAppId(cAppId);
+	
+	string sAppKey = ReadConfig("app_key");
+	char cAppKey[33] = { 0 };
+	sprintf_s(cAppKey, sizeof(cAppKey), "%s", sAppKey.c_str());
+	package->SetAppKey(cAppKey);
+
 	// 检查数据包必要参数
 	if (package->Check() == FALSE) {
 		//MessageBox(NULL, L"收到错误的数据包！", L"温馨提示：", NULL);
@@ -187,6 +198,7 @@ EnHandleResult WebSocketClient::OnWSMessageBody(IHttpClient* pSender, CONNID dwC
 		this->RecvState = TRUE;
 		memcpy(this->RecvData, pData, iLength);
 	}
+
 	// 动态增加内存大小
 	else {
 		this->RecvData = (char *)realloc(this->RecvData, (size_t)((this->RecvDataLength + iLength + 1) * sizeof(char)));
