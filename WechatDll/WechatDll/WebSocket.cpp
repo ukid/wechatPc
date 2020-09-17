@@ -204,6 +204,15 @@ EnHandleResult WebSocketClient::OnWSMessageBody(IHttpClient* pSender, CONNID dwC
 
 EnHandleResult WebSocketClient::OnWSMessageComplete(IHttpClient* pSender, CONNID dwConnID)
 {
+	// 数据包的code
+	BYTE iOperationCode;
+	pSender->GetWSMessageState(nullptr, nullptr, &iOperationCode, nullptr, nullptr, nullptr);
+	if (iOperationCode == 0x8)
+		return HR_ERROR;
+	// Pong
+	if (iOperationCode == 0xA)
+		return HR_OK;
+
 	// 整合数据
 	this->RecvData[this->RecvDataLength] = '\0';
 	// 处理接收到的数据
@@ -212,12 +221,6 @@ EnHandleResult WebSocketClient::OnWSMessageComplete(IHttpClient* pSender, CONNID
 	this->RecvDataLength = 0;
 	free(this->RecvData);
 	this->RecvState = FALSE;
-
-	// 数据包的code
-	BYTE iOperationCode;
-	pSender->GetWSMessageState(nullptr, nullptr, &iOperationCode, nullptr, nullptr, nullptr);
-	if (iOperationCode == 0x8)
-		return HR_ERROR;
 
 	return HR_OK;
 }

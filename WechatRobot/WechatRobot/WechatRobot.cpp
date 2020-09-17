@@ -33,22 +33,43 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 }
 
 /*
+心跳
+*/
+DWORD WINAPI SendHeartBeat(HMODULE hModule)
+{
+	while (TRUE) {
+		WsClientSendHeartBeat();
+		Sleep(5000);  // 每隔5秒心跳一次
+	}
+	return TRUE;
+}
+
+/*
 监控WebSocket
 */
 DWORD WINAPI WebSocketClientMonitor(HWND hwndDlg)
 {
 	Sleep(5000);  // 等待5秒才连接服务器端，目的是为了已经登录的微信端上报
 	WsClientInit();  // 初始化
+
+	// 心跳线程
+	HANDLE bThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SendHeartBeat, hwndDlg, NULL, 0);
+	if (bThread != 0) {
+		CloseHandle(bThread);
+	}
 	return TRUE;
 }
+
 /*
 监控WebSocket
 */
 DWORD WINAPI WebSocketMonitor(HWND hwndDlg)
 {
 	WsServerInit();  // 初始化
+	
 	return TRUE;
 }
+
 /*
 界面事件触发 - 回调
 */
